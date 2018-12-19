@@ -22,7 +22,23 @@ class neuralNetwork:
     self.activation_function = lambda x: scipy.special.expit(x)
     pass
 
-  def train():
+  def train(self, inputs_list, targets_list):
+    inputs = numpy.array(inputs_list, ndmin=2).T
+    targets = numpy.array(targets_list, ndmin=2).T
+
+    hidden_inputs = numpy.dot(self.wif, inputs)
+    hidden_outputs = self.activation_function(hidden_inputs)
+
+    final_inputs =numpy.dot(self.who, hidden_outputs)
+    final_outputs = self.activation_function(final_inputs)
+
+    output_errors = targets - final_outputs
+    hidden_errors = numpy.dot(self.who.T, output_errors)
+
+    self.who += self.lr * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs)), numpy.transponse(hidden_inputs))
+    
+    self.wih = self.lr * numpy.dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), numpy.transponse(inputs))
+
     pass
   
   def query(self, inputs_list):
@@ -37,7 +53,9 @@ class neuralNetwork:
     final_inputs = numpy.dot(self.who, hidden_outputs)
 
     final_outputs = self.activation_function(final_inputs)
+    
     return final_outputs
+    
     pass
 
 # количество входных, скрытых и выходных данных
